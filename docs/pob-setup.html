@@ -1,0 +1,195 @@
+<title>Your First Build Code</title>
+<meta name="author" content="reytla">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus+SC&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Exile Build Advisor companion sheet. © 2026 reytla. MIT licence.
+   Layout: one printable column; three parts (install, sign in, every time) as one numbered sequence,
+   each step closing with a "you should see" check. Same stone-and-brass tokens as the advisor. */
+:root {
+  --stone: #eceef1; --slab: #f9fafb; --slab-2: #e4e7eb; --line: #d0d5dc;
+  --ink: #1a1f27; --ink-2: #4b5462; --ink-3: #747e8d;
+  --brass: #8a5f14; --brass-soft: #f2e7d0; --brass-ink: #ffffff;
+  --good: #23743a; --good-soft: #dff0e3; --warn: #9a5b00; --warn-soft: #f9ecd3;
+  --chip: #111418; --chip-ink: #f3f3f3;
+  --display: "Marcellus SC", "Palatino Linotype", Palatino, Georgia, serif;
+  --body: "Figtree", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  --data: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --stone: #0f1217; --slab: #171b22; --slab-2: #1f242d; --line: #2c323d;
+    --ink: #e9e7e2; --ink-2: #b0b6c0; --ink-3: #7f8794;
+    --brass: #d9a94f; --brass-soft: #30271a; --brass-ink: #1b1407;
+    --good: #6fca82; --good-soft: #17301e; --warn: #e8a94b; --warn-soft: #382a12;
+    --chip: #000000; --chip-ink: #f3f3f3;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --stone: #0f1217; --slab: #171b22; --slab-2: #1f242d; --line: #2c323d;
+  --ink: #e9e7e2; --ink-2: #b0b6c0; --ink-3: #7f8794;
+  --brass: #d9a94f; --brass-soft: #30271a; --brass-ink: #1b1407;
+  --good: #6fca82; --good-soft: #17301e; --warn: #e8a94b; --warn-soft: #382a12;
+  --chip: #000000; --chip-ink: #f3f3f3;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--stone); color: var(--ink); font: 15.5px/1.55 var(--body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 760px; margin: 0 auto; padding-block: 36px 56px; display: grid; gap: 22px; }
+h1, h2 { font-family: var(--display); font-weight: 400; text-wrap: balance; margin: 0; letter-spacing: .01em; }
+h1 { font-size: clamp(30px, 5vw, 40px); line-height: 1.1; }
+h2 { font-size: 21px; }
+p { margin: 0; }
+a { color: var(--brass); font-weight: 600; text-underline-offset: 3px; overflow-wrap: anywhere; }
+a:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; border-radius: 3px; }
+.eyebrow { font-size: 12.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .12em; color: var(--brass); margin-bottom: 8px; }
+.lede { color: var(--ink-2); font-size: 16.5px; max-width: 62ch; margin-top: 10px; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.facts span { font-size: 13px; padding: 4px 11px; border-radius: 999px; background: var(--slab); border: 1px solid var(--line); color: var(--ink-2); }
+.facts b { color: var(--ink); font-weight: 600; }
+.part { background: var(--slab); border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px; }
+.part-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin-bottom: 14px; }
+.part-head .when { font-size: 13px; color: var(--ink-3); }
+ol.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+ol.steps > li { position: relative; padding-left: 44px; }
+ol.steps > li::before { content: attr(data-n); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; display: grid; place-items: center;
+  border-radius: 50%; background: var(--brass); color: var(--brass-ink); font-family: var(--display); font-size: 15px; }
+.do { font-weight: 600; }
+.see { margin-top: 6px; font-size: 14px; color: var(--ink-2); }
+.see::before { content: "You should see: "; font-weight: 600; color: var(--good); }
+.note { margin-top: 6px; font-size: 14px; color: var(--ink-2); }
+.pob { font-family: var(--data); font-size: .86em; background: var(--chip); color: var(--chip-ink); padding: 1px 7px; border-radius: 3px; white-space: nowrap; }
+.msg { font-family: var(--data); font-size: .88em; color: var(--ink); background: var(--slab-2); padding: 1px 6px; border-radius: 3px; }
+.timer { margin-top: 10px; padding: 10px 14px; border-radius: 8px; background: var(--warn-soft); border: 1px solid color-mix(in srgb, var(--warn) 35%, transparent); font-size: 14.5px; }
+.timer b { color: var(--warn); }
+.dl { display: inline-block; margin-top: 8px; padding: 7px 14px; border-radius: 999px; background: var(--brass); color: var(--brass-ink); text-decoration: none; font-size: 14px; }
+.dl:hover { filter: brightness(1.08); }
+.fix { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+.fix th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-3); font-weight: 600; padding: 0 10px 8px 0; border-bottom: 1px solid var(--line); }
+.fix td { padding: 10px 10px 10px 0; border-bottom: 1px solid var(--line); vertical-align: top; color: var(--ink-2); }
+.fix tr:last-child td { border-bottom: none; }
+.fix td:first-child { color: var(--ink); font-weight: 600; width: 40%; }
+.tbl { overflow-x: auto; }
+.foot { font-size: 12.5px; color: var(--ink-3); }
+@media (max-width: 520px) {
+  .part { padding: 16px; }
+  ol.steps > li { padding-left: 40px; }
+  .fix, .fix tbody, .fix tr, .fix td { display: block; width: 100%; }
+  .fix thead { display: none; }
+  .fix td { border-bottom: none; padding: 2px 0; }
+  .fix tr { border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .fix td:first-child { width: 100%; }
+}
+@media print {
+  :root { color-scheme: light; }
+  body { background: #fff; font-size: 12.5px; }
+  .wrap { padding-block: 0; gap: 12px; max-width: none; }
+  .part { break-inside: avoid; border-color: #bbb; background: #fff; }
+  .dl { background: none; color: var(--ink); padding: 0; text-decoration: underline; }
+}
+</style>
+
+<main class="wrap">
+  <header>
+    <p class="eyebrow">Exile Build Advisor · setup sheet</p>
+    <h1>Get your build code from Path of Building</h1>
+    <p class="lede">Path of Building (PoB) is a free program that copies your Path of Exile 2 character. The advisor reads the code it makes. Follow these steps in order and check each "You should see" line before moving on. You do not need a build from anyone else: PoB makes one from your own character.</p>
+    <div class="facts"><span><b>Windows</b> PC</span><span>About <b>10 minutes</b> the first time</span><span>About <b>1 minute</b> after that</span><span>Checked against PoB <b>v0.23.1</b></span></div>
+  </header>
+
+  <section class="part" aria-labelledby="p1">
+    <div class="part-head"><h2 id="p1">Install</h2><span class="when">once</span></div>
+    <ol class="steps">
+      <li data-n="1">
+        <p class="do">Download Path of Building for Path of Exile 2.</p>
+        <a class="dl" href="https://github.com/PathOfBuildingCommunity/PathOfBuilding-PoE2/releases/latest/download/PathOfBuildingCommunity-PoE2-Setup.exe">Download the installer (about 340 MB)</a>
+        <p class="note">This is the official link from <span class="msg">pathofbuilding.community</span>. Make sure it says <b>PoE2</b>: the program for the first game will not work.</p>
+        <p class="see">a file called <span class="msg">PathOfBuildingCommunity-PoE2-Setup.exe</span> in your Downloads folder.</p>
+      </li>
+      <li data-n="2">
+        <p class="do">Run the file and click through the installer with the default choices.</p>
+        <p class="note">If Windows shows <span class="msg">Windows protected your PC</span>, click <b>More info</b>, then <b>Run anyway</b>. Only do this for the file from the link above.</p>
+        <p class="see">Path of Building opens on a list of builds, with a <span class="pob">New</span> button at the top. If it offers an update first, let it update.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="part" aria-labelledby="p2">
+    <div class="part-head"><h2 id="p2">Sign in</h2><span class="when">once; PoB remembers you</span></div>
+    <ol class="steps">
+      <li data-n="3">
+        <p class="do">Click <span class="pob">New</span>, then <span class="pob">Import/Export Build</span> in the top-left corner.</p>
+        <p class="note"><b>The build list starts empty, and that is normal.</b> You do not need a build file from anyone: the next steps make one from your own character.</p>
+        <p class="see">a box called <i>Character Import</i> with the status <span class="msg">Not authenticated</span> and a button <span class="pob">Authorize with Path of Exile</span>.</p>
+      </li>
+      <li data-n="4">
+        <p class="do">Open your <b>default</b> web browser and sign in at <span class="msg">pathofexile.com</span> first. Finish signing in completely, including Steam or other sign-in options.</p>
+        <p class="note">PoB opens your default browser. If you sign in with a different browser, PoB's page will ask you to sign in again and the 30 seconds run out.</p>
+        <p class="note">Doing this now makes the next step quick. Use <b>pathofexile.com</b>, not pathofexile2.com: that is where PoB asks for approval.</p>
+        <p class="note"><b>The sign-in page shows Path of Exile 1 pictures.</b> That is correct. Both games share one account and one sign-in page. PoB still imports your Path of Exile 2 characters: its realm box says PoE2.</p>
+      </li>
+      <li data-n="5">
+        <p class="do">Back in PoB, click <span class="pob">Authorize with Path of Exile</span>. Your browser opens a Path of Exile page: approve the request.</p>
+        <div class="timer"><b>You have 30 seconds.</b> PoB shows <span class="msg">Logging in... (30)</span> and counts down. That is too short to sign in through Steam, which is why step 4 comes first. If it runs out, or the browser says <span class="msg">localhost refused to connect</span>, nothing is broken: click the button again and approve straight away.</div>
+        <p class="see">the browser says <span class="msg">PoB 2 - Authentication Successful</span>. Back in PoB, the status changes to <span class="msg">Character list successfully retrieved.</span> and a <span class="pob">Logout from Path of Exile API</span> button appears.</p>
+        <p class="note"><b>Already signed in from before?</b> Then PoB skips this and shows <span class="msg">Authenticated</span> with <span class="msg">select your character's realm:</span>, a <span class="pob">PoE2</span> box and a <span class="pob">Start</span> button. Leave it on PoE2 and click <span class="pob">Start</span>.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="part" aria-labelledby="p3">
+    <div class="part-head"><h2 id="p3">Make the code</h2><span class="when">every time your character changes</span></div>
+    <ol class="steps">
+      <li data-n="6">
+        <p class="do">If you see a <span class="pob">Start</span> button, click it first. Then, under <i>Choose character to import data from</i>, pick your <b>League</b>, then your <b>character</b>.</p>
+        <p class="note">Characters only appear under their own league. Event-league characters are not under Standard.</p>
+      </li>
+      <li data-n="7">
+        <p class="do">Click <span class="pob">Passive Tree and Jewels</span>. If a box asks to overwrite the current tree, click <span class="pob">Import</span>.</p>
+        <p class="see"><span class="msg">Passive tree and jewels successfully imported.</span></p>
+      </li>
+      <li data-n="8">
+        <p class="do">Click <span class="pob">Items and Skills</span>. Leave the tick boxes as they are.</p>
+        <p class="note">The defaults are right: Delete jewels, Delete skills and Delete equipment ticked; Ignore weapon swap unticked.</p>
+        <p class="see"><span class="msg">Items and skills successfully imported.</span></p>
+      </li>
+      <li data-n="9">
+        <p class="do">Under <i>Build Sharing</i>, click <span class="pob">Generate</span>, then <span class="pob">Copy</span>.</p>
+        <p class="note"><b>Only after steps 7 and 8.</b> The Code box can already hold a code before you import, but that code is for an empty build. Always click <span class="pob">Generate</span> again after importing.</p>
+        <p class="note">Do not use <span class="pob">Share</span>. It makes a web link, and the advisor needs the code itself.</p>
+        <p class="see">a long line of letters and numbers in the box. It is often thousands of characters long; that is normal.</p>
+      </li>
+      <li data-n="10">
+        <p class="do">Open <span class="msg">poe2-advisor.html</span>, paste into <i>Your build code</i> and click <b>Read my build</b>.</p>
+        <p class="see">your character's name and class at the top, and the Check-up list below it.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="part" aria-labelledby="p4">
+    <div class="part-head"><h2 id="p4">If something goes wrong</h2></div>
+    <div class="tbl"><table class="fix">
+      <thead><tr><th>What you see</th><th>What to do</th></tr></thead>
+      <tbody>
+        <tr><td>The countdown reached 0 and it says <span class="msg">Not authenticated</span></td><td>Sign in at pathofexile.com in your browser first, then click <span class="pob">Authorize with Path of Exile</span> again and approve within 30 seconds.</td></tr>
+        <tr><td>The sign-in page looks like Path of Exile 1, so it seems to be the wrong game</td><td>It is the right page. Path of Exile 1 and 2 use the same account and sign-in on pathofexile.com. Sign in and approve; PoB then lists your PoE 2 characters. You do not need to start again.</td></tr>
+        <tr><td>After approving, the browser says <span class="msg">This site can't be reached</span> / <span class="msg">localhost refused to connect</span></td><td>Approval took longer than 30 seconds (often because you had to sign in, for example through Steam), so PoB stopped waiting. You are signed in now: click <span class="pob">Authorize with Path of Exile</span> again and approve immediately. Make sure it opens the same browser you signed in with.</td></tr>
+        <tr><td>The browser page never opened</td><td>Open your browser yourself, then click the button again. Set a default browser in Windows settings if none opens.</td></tr>
+        <tr><td><span class="msg">Authentication failed</span> or <span class="msg">Error retrieving character list, try again</span></td><td>Wait a minute and try again. The Path of Exile website may be busy or down for maintenance.</td></tr>
+        <tr><td><span class="msg">Requests are being sent too fast</span></td><td>Wait for the seconds it shows, then try again.</td></tr>
+        <tr><td><span class="msg">Authenticated</span> but no character list, only <span class="msg">select your character's realm</span> and a <span class="pob">Start</span> button</td><td>Leave the box on PoE2 and click <span class="pob">Start</span>. Your league and character lists appear.</td></tr>
+        <tr><td>The advisor says the code is an empty build</td><td>The code was made before importing your character. Do steps 6 to 9 in order, clicking <span class="pob">Generate</span> after the imports.</td></tr>
+        <tr><td>The <i>Builds</i> folder in Documents is empty</td><td>That is normal. PoB only saves a file there when you click <span class="pob">Save</span>, and you don't need it: the advisor uses the code you copy in step 9. If you do save a build, you can also open that <span class="msg">.xml</span> file with the advisor's <b>Open a saved file</b> button.</td></tr>
+        <tr><td>Your character is not in the list</td><td>Change the <b>League</b> box. Each league has its own list.</td></tr>
+        <tr><td><span class="msg">The account has no characters to import.</span></td><td>You signed in with a different account from the one you play on. Click <span class="pob">Logout from Path of Exile API</span> and sign in with the right one.</td></tr>
+        <tr><td>The advisor says <span class="msg">Could not decompress the code</span></td><td>Only part of the code was pasted. Click <span class="pob">Copy</span> again and paste the whole thing.</td></tr>
+        <tr><td>The advisor says the code is from the first Path of Exile</td><td>You installed the wrong program. Use the PoE2 download in step 1.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <p class="foot">Exile Build Advisor · © 2026 reytla · MIT licence. Path of Building is a free community project; Path of Exile is © Grinding Gear Games. Not affiliated with either.</p>
+</main>

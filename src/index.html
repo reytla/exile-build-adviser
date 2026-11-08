@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<!-- Exile Build Advisor. Copyright (c) 2026 reytla. MIT licence. https://github.com/reytla/exile-build-adviser -->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Exile Build Advisor</title>
+<meta name="author" content="reytla">
+<meta name="copyright" content="© 2026 reytla. MIT licence.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus+SC&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<!--INLINE:style.css-->
+</head>
+<body>
+<header class="appbar">
+  <div class="appbar-in">
+    <a class="brand" href="#" id="homeLink" aria-label="Exile Build Advisor, start page">
+      <svg class="sigil" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 30 16 16 30 2 16Z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M16 8 24 16 16 24 8 16Z" fill="currentColor" opacity=".9"/><path d="M16 2v6M16 24v6M2 16h6M24 16h6" stroke="currentColor" stroke-width="1.6"/></svg>
+      <span>Exile Build Advisor</span>
+    </a>
+    <span class="appbar-gap"></span>
+    <button type="button" class="ghost" id="tutLink" title="A step-by-step guide for new players">How to use</button>
+    <button type="button" class="ghost" id="dataLink" title="Which game data this page uses"><span id="dataBadge">Game data</span></button>
+    <button type="button" class="ghost icon" id="themeBtn" aria-label="Switch colour theme" title="Switch colour theme">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7a5 5 0 0 1 0 10Z" fill="currentColor"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="page">
+  <!-- ================= welcome: no build loaded ================= -->
+  <section id="welcome" class="welcome">
+    <div class="hero">
+      <div class="intro">
+        <p class="eyebrow">Path of Exile 2 · build check-up</p>
+        <h1>See what's holding your character back</h1>
+        <p class="lede">Path of Building, a free program, turns your character into a long code. Copy that code and paste it below. The advisor reads your gear, skills and passive tree and shows where you stand. Everything runs in this page; nothing is uploaded.</p>
+      </div>
+      <button type="button" class="tut-card" id="tutLink2" aria-label="New here? Open the 10-minute tutorial">
+        <svg class="tut-art" viewBox="0 0 160 120" aria-hidden="true">
+          <path class="map" d="M10 18 50 8l40 10 60-10v94l-60 10-40-10-40 10Z"/>
+          <path class="fold-line" d="M50 8v94M90 18v94"/>
+          <path class="trail" d="M24 92c14-4 20-16 30-24s24-6 32-16 10-22 26-26 22 2 28-4"/>
+          <circle class="wp" cx="24" cy="92" r="7"/><text x="24" y="95.5">1</text>
+          <circle class="wp" cx="56" cy="66" r="7"/><text x="56" y="69.5">2</text>
+          <circle class="wp" cx="94" cy="46" r="7"/><text x="94" y="49.5">3</text>
+          <path class="goal" d="M138 10 148 22 138 34 128 22Z"/><path class="goal-in" d="M138 16 143 22 138 28 133 22Z"/>
+        </svg>
+        <span class="tut-copy">
+          <span class="tut-kicker">New here?</span>
+          <span class="tut-title">Start with the tutorial</span>
+          <span class="tut-sub">Ten minutes, step by step, from your first build code to your first fix. Try it with the example build, no Path of Building needed.</span>
+          <span class="tut-go">Open the tutorial <span aria-hidden="true">→</span></span>
+        </span>
+      </button>
+    </div>
+
+    <div class="welcome-grid">
+      <div class="stack">
+      <div class="card input-card">
+        <label class="field-label" for="code">Build code from Path of Building</label>
+        <div class="code-help"><p><b>You don't need to know this code.</b> It is not a password. Path of Building makes it for you from your character, and you copy it from there.</p>
+          <button type="button" class="small" id="setupLink3">Show me how to get it</button></div>
+        <textarea id="code" rows="6" spellcheck="false" placeholder="Paste the code Path of Building made for you. It is a long jumble of letters and numbers, often starting with eNrt…"></textarea>
+        <div class="actions">
+          <button type="button" class="primary" id="decodeBtn">Read my build</button>
+          <input type="file" id="codeFile" accept=".txt,.xml,text/plain" hidden>
+          <button type="button" id="codeFileBtn">Open a saved file</button>
+        </div>
+        <div id="charMsg" aria-live="polite"></div>
+        <div class="example-row">
+          <span class="muted">No code yet?</span>
+          <button type="button" class="linkish" id="exampleBtn">Try an example build</button>
+          <span class="muted small">(a level 51 Stormweaver)</span>
+        </div>
+      </div>
+      <details class="card lookup" id="lookupBox">
+        <summary><span class="card-title">Or look up by account name</span><span class="small muted">Works for characters poe.ninja lists</span></summary>
+        <p class="small muted" style="margin:8px 0 4px">This asks poe.ninja for your character. It only knows characters with a <b>public profile</b> that it has picked up in its league snapshot. If it does not work, the page explains why; the build code on the right always works.</p>
+        <div class="form-grid">
+          <div><label class="field-label" for="luAccount">Account name</label><input type="text" id="luAccount" placeholder="Name#1234" autocomplete="off" spellcheck="false"></div>
+          <div><label class="field-label" for="luName">Character name</label><input type="text" id="luName" autocomplete="off" spellcheck="false"></div>
+          <div><label class="field-label" for="luLeague">League</label><select id="luLeague"></select></div>
+          <div id="luOtherRow" hidden><label class="field-label" for="luOther">League name</label><input type="text" id="luOther" placeholder="as shown on poe.ninja"></div>
+        </div>
+        <div class="actions"><button type="button" class="primary" id="luBtn">Look up</button></div>
+        <div id="luMsg" aria-live="polite"></div>
+        <details class="fold">
+          <summary>Advanced: use your own proxy</summary>
+          <p class="small">Web pages may only read another site's data when that site allows it, and poe.ninja does not. A small proxy of your own fixes this. Free option: create a Cloudflare Worker, paste the code below, deploy it, and enter its address here followed by <span class="mono">?url=</span>.</p>
+          <label class="field-label" for="luProxy">Proxy address</label>
+          <input type="text" id="luProxy" placeholder="https://your-worker.your-name.workers.dev/?url=" spellcheck="false">
+          <div class="actions"><button type="button" class="small" id="luCopy">Copy the Worker code</button><span class="small muted" id="luCopied" aria-live="polite"></span></div>
+          <pre class="code" id="luWorker"></pre>
+        </details>
+      </details>
+      <div class="card expect">
+        <h2>What you will see</h2>
+        <ul>
+          <li>A check-up: what is wrong or wasted, why it matters, what fixing it gains, and what to do.</li>
+          <li>Your resistances against the 75% cap, and your life, energy shield, mana and Spirit.</li>
+          <li>Every skill with its supports, what it costs to use, and how much Spirit it reserves.</li>
+          <li>Your gear and passive tree, explained in plain language. Tap any <b>?</b> for help.</li>
+          <li>A side-by-side check against a build guide you follow, including whether the guide is out of date.</li>
+        </ul>
+      </div>
+      </div>
+
+      <div class="card guide">
+        <h2 class="card-title">Get your build code</h2>
+        <p class="muted small">Path of Building is a free program that copies your character from the game. You need the version for Path of Exile 2.</p>
+        <ol class="steps">
+          <li><b>Install Path of Building for Path of Exile 2.</b> Download it from <span class="mono">pathofbuilding.community</span> (choose the PoE&nbsp;2 version). It is a different program from the one for the first game.</li>
+          <li><b>Start a build.</b> Open the program and click <span class="pob">New</span>. Then click <span class="pob">Import/Export Build</span> in the top-left corner. The build list starts empty: you do not need a build from anyone, because the next steps make one from your own character.</li>
+          <li><b>Sign in once.</b> Sign in at pathofexile.com (not pathofexile2.com) in your browser first. Its sign-in page shows Path of Exile 1 pictures; that is right, because both games share one account. Then, under <i>Character Import</i>, click <span class="pob">Authorize with Path of Exile</span> and approve the request in your browser <b>within 30 seconds</b> (PoB counts down). Afterwards PoB shows <span class="pob">Logout from Path of Exile API</span>, which means you are signed in.</li>
+          <li><b>Choose your character.</b> If PoB shows <i>select your character's realm</i> and a <span class="pob">Start</span> button, click <span class="pob">Start</span> first. Then pick the <i>League</i> (for example Standard) and then your character from the list below it.</li>
+          <li><b>Import everything.</b> Click <span class="pob">Passive Tree and Jewels</span>, then <span class="pob">Items and Skills</span>. Leave <i>Delete jewels</i>, <i>Delete skills</i> and <i>Delete equipment</i> ticked so old data is replaced. Leave <i>Ignore weapon swap</i> unticked so your second weapon set is included. The status line turns green.</li>
+          <li><b>Make the code.</b> Only after importing: under <i>Build Sharing</i>, click <span class="pob">Generate</span>, then <span class="pob">Copy</span>. A code already in the box before you import is an empty build. Use the code itself, not <span class="pob">Share</span>: Share makes a website link, and this page cannot open those.</li>
+          <li><b>Paste it here</b> and click <b>Read my build</b>. Repeat steps 4 to 7 whenever your character changes.</li>
+        </ol>
+        <button type="button" class="setup-cta" id="setupLink"><span><b>Stuck?</b> Open the detailed setup sheet</span><span class="small muted">Every step with what you should see, and fixes for each error</span></button>
+        <details class="fold">
+          <summary>Something went wrong?</summary>
+          <ul>
+            <li><b>The character list is empty:</b> check the League box. Characters in an event league only show when that league is chosen.</li>
+            <li><b>"Could not decompress the code":</b> the code was cut off. Click <span class="pob">Copy</span> again and paste the whole thing.</li>
+            <li><b>The code is very long:</b> that is normal. Codes are often 10,000 characters or more.</li>
+            <li><b>The account lookup did not work:</b> that is common. It needs a public profile and a character poe.ninja has picked up. Use the build code instead.</li>
+            <li><b>The page says the passive tree is a different version:</b> open <i>Game data</i> at the top right and refresh it.</li>
+          </ul>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= tutorial ================= -->
+  <section id="tutorialPage" hidden>
+    <button type="button" class="ghost" id="tutBack">← Back</button>
+    <div class="intro" style="margin-top:10px">
+      <p class="eyebrow">Tutorial · about 10 minutes</p>
+      <h1>How to use the advisor</h1>
+      <p class="lede">New to Path of Exile 2 or to build tools? Start here. This walks you from "I have a character" to "I know what to fix next", one step at a time. You can try every step with the example build.</p>
+      <div class="actions"><button type="button" class="primary" id="tutExample">Open the example build</button><span class="small muted">You can come back here at any time with <b>How to use</b> at the top.</span></div>
+    </div>
+
+    <div class="tut">
+      <nav class="tut-toc card" aria-label="Tutorial sections">
+        <p class="field-label" style="margin-top:0">On this page</p>
+        <ol>
+          <li><a href="#t-what" data-jump>What it does</a></li>
+          <li><a href="#t-need" data-jump>What you need</a></li>
+          <li><a href="#t-in" data-jump>Get your build in</a></li>
+          <li><a href="#t-read" data-jump>Read the check-up</a></li>
+          <li><a href="#t-goals" data-jump>Tell it what you want</a></li>
+          <li><a href="#t-act" data-jump>Act on a fix</a></li>
+          <li><a href="#t-guide" data-jump>Compare with a guide</a></li>
+          <li><a href="#t-fresh" data-jump>Keep it up to date</a></li>
+          <li><a href="#t-words" data-jump>Words you will meet</a></li>
+          <li><a href="#t-faq" data-jump>Questions</a></li>
+        </ol>
+      </nav>
+
+      <div class="tut-body">
+        <section class="card tut-sec" id="t-what">
+          <h2 class="card-title"><span class="tut-n">1</span>What it does</h2>
+          <p>The advisor reads your character (gear, skills and passive tree) and points out what is holding it back: resistances that are too low, gems and passives that do nothing, mana that runs out, and more. For each problem it says <b>why</b> it matters, <b>what fixing it gains</b>, <b>what it costs</b> and <b>what to do</b>, and it puts the best-value fixes first.</p>
+          <p>Everything happens inside this page on your computer. Nothing is uploaded, and there is no account to make.</p>
+        </section>
+
+        <section class="card tut-sec" id="t-need">
+          <h2 class="card-title"><span class="tut-n">2</span>What you need</h2>
+          <ul class="tut-list">
+            <li>A Path of Exile 2 character, at any level. You do not need a build file from anyone else: Path of Building makes one from your character.</li>
+            <li><b>Path of Building for Path of Exile 2</b>, a free program that copies your character from the game. Get it from <span class="mono">pathofbuilding.community</span> and choose the PoE&nbsp;2 version. Players call it "PoB".</li>
+            <li>Optional: a build guide you follow (for example from maxroll.gg) and a rough idea of prices on the trade site.</li>
+          </ul>
+          <div class="tip"><b>Tip:</b> no PoB yet? Click <b>Open the example build</b> above to see everything first, then come back.</div>
+        </section>
+
+        <section class="card tut-sec" id="t-in">
+          <h2 class="card-title"><span class="tut-n">3</span>Get your build in</h2>
+          <p>There are three ways. The first one always works.</p>
+          <div class="tip"><b>First time with Path of Building?</b> <button type="button" class="linkish" id="setupLink2">Open the setup sheet</button>: it covers installing, signing in and copying the code, with a check after every step.</div>
+          <h3 class="sub">A. Paste a build code from Path of Building (recommended)</h3>
+          <ol class="steps">
+            <li><b>Open PoB</b>, click <span class="pob">New</span>, then <span class="pob">Import/Export Build</span>. An empty build list is normal.</li>
+            <li><b>Sign in once.</b> Sign in at pathofexile.com in your browser first, then click <span class="pob">Authorize with Path of Exile</span> and approve in the browser within 30 seconds. Afterwards PoB shows <span class="pob">Logout from Path of Exile API</span>.</li>
+            <li><b>Pick your league and character</b>, then click <span class="pob">Passive Tree and Jewels</span> and <span class="pob">Items and Skills</span>.</li>
+            <li><b>Optional but useful:</b> in PoB's Skills tab, set your main attack or spell as the <i>Main Skill</i>. Then the advisor can talk about damage and mana for that skill.</li>
+            <li><b>Under Build Sharing</b> click <span class="pob">Generate</span>, then <span class="pob">Copy</span>. Not <span class="pob">Share</span>: that makes a web link the advisor cannot open.</li>
+            <li><b>Paste</b> into "Your build code" on the start screen and click <b>Read my build</b>.</li>
+          </ol>
+          <h3 class="sub">B. Open a saved file</h3>
+          <p>Click <b>Open a saved file</b> to load a build you saved in Path of Building (an <span class="mono">.xml</span> file in the Builds folder in Documents), or a text file with a code in it. The Builds folder stays empty until you click <i>Save</i> in PoB; you don't need it for method A.</p>
+          <h3 class="sub">C. Look up by account name</h3>
+          <p>Type your account name (like <span class="mono">Name#1234</span>), character name and league. This asks the website poe.ninja for your character. It often does not work: poe.ninja only knows characters with a <b>public profile</b> that it has picked up, and it does not let other web pages read its data unless you set up a small proxy (see <i>Advanced</i> in that box). If it fails, the page tells you why. Use method A.</p>
+          <div class="tip"><b>Several versions in one code?</b> Some codes hold more than one passive tree, skill set or item set. Pickers appear in the banner at the top so you can choose which one to review.</div>
+        </section>
+
+        <section class="card tut-sec" id="t-read">
+          <h2 class="card-title"><span class="tut-n">4</span>Read the check-up</h2>
+          <p>After your build loads, the <b>Check-up</b> tab opens. Each problem is a card like this one (from the example build):</p>
+          <article class="finding bad tut-demo" aria-label="Example finding">
+            <div class="top"><span class="rank">#1</span><span class="sev bad">Fix now</span><span class="area">Resistances</span>
+              <span class="meter" role="img" aria-label="Value 5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+            <h3>Cold resistance is 21%, 54 below the cap</h3>
+            <dl class="rows">
+              <dt>Why</dt><dd>Below the 75% cap you take more cold damage than you need to.</dd>
+              <dt>What it gains</dt><dd>Capping it means about 68% less cold damage taken.</dd>
+              <dt>Cost</dt><dd>≈ 10 exalted · a short trade or task</dd>
+              <dt>What to do</dt><dd><ul><li>Find +54% Cold Resistance in total on gear.</li></ul><span class="btn small fake">Search: Helmet with 30%+ cold resistance ↗</span></dd>
+            </dl>
+          </article>
+          <dl class="tut-legend">
+            <dt><span class="rank">#1</span></dt><dd>Its place in the ranking. Lower numbers give you the most for the least.</dd>
+            <dt><span class="sev bad">Fix now</span> <span class="sev warn">Worth doing</span> <span class="sev info">Tip</span></dt><dd>How serious it is. Start with "Fix now".</dd>
+            <dt><span class="meter"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></dt><dd>How much it helps what you care about, compared with the other cards.</dd>
+            <dt><span class="cert">probably</span> <span class="cert">check this</span></dt><dd>"Probably" means very likely. "Check this" means the page cannot be sure: look in the game or in PoB before acting.</dd>
+            <dt>unknown</dt><dd>The page never guesses. When something cannot be worked out from your build or the game data, it says <i>unknown</i>.</dd>
+          </dl>
+          <p>Use the area buttons (Resistances, Skills, Gear…) to filter, and <b>Most serious first</b> if you prefer that order. Areas with no problems are listed at the bottom in green.</p>
+          <p>The other tabs describe your character: <b>Overview</b> (resistances and key numbers), <b>Skills</b> (each skill, its supports, cost and Spirit), <b>Gear</b> and <b>Passive tree</b>. Tap any <b>?</b> for a short explanation.</p>
+        </section>
+
+        <section class="card tut-sec" id="t-goals">
+          <h2 class="card-title"><span class="tut-n">5</span>Tell it what you want</h2>
+          <h3 class="sub">What matters to you</h3>
+          <p>At the top of the check-up, rate Damage, Survivability, Mana, Ease of play and Progression from <i>Not</i> to <i>Most</i>. The ranking changes straight away. Dying a lot? Set Survivability to <i>Most</i>.</p>
+          <h3 class="sub">Your details tab</h3>
+          <ul class="tut-list">
+            <li><b>League:</b> Standard, or the event league's name. Trade links search this league.</li>
+            <li><b>Budget</b> and <b>spare currency</b> (one per line, like <span class="mono">12 exalted</span>): cards then say "over your budget" or "your spare currency covers it".</li>
+            <li><b>Items in your stash:</b> in the game, hover an item and press <b>Ctrl+C</b>, then paste here. If one of them fixes a problem, the card says "In your stash".</li>
+            <li><b>Prices:</b> prices change every day, so you enter them. Look up a few items on the trade site and type the price in Exalted Orbs. Blank means unknown, and the cost then shows "price unknown".</li>
+          </ul>
+          <p class="small muted">All of this is saved in your browser only.</p>
+        </section>
+
+        <section class="card tut-sec" id="t-act">
+          <h2 class="card-title"><span class="tut-n">6</span>Act on a fix</h2>
+          <h3 class="sub">Buying an item</h3>
+          <ol class="steps">
+            <li>Click a brass <b>Search</b> button on a card. The official trade site opens with the filters filled in (it may ask you to sign in).</li>
+            <li>The text beside the button says which item it replaces and what it keeps. Add any other stats you want on the trade site.</li>
+            <li>Buy it. For "Instant Buyout" listings, click <i>Secure Item</i> on the site; the game takes you to the seller's hideout, where you buy it from their merchant. This needs the asynchronous trade feature, unlocked in Act 4 at Kingsmarch. For other listings, message the seller in the game.</li>
+            <li>Equip it, then make a new code in PoB and read it again to see the difference.</li>
+          </ol>
+          <h3 class="sub">Other kinds of fix</h3>
+          <ul class="tut-list">
+            <li><b>Supports that do nothing:</b> open the skill gems panel in the game and move the support to a skill it helps. Free.</li>
+            <li><b>Gem level too low:</b> use an <i>Uncut Skill Gem</i> (or <i>Uncut Spirit Gem</i> for always-on skills) of the level shown.</li>
+            <li><b>Passives doing nothing:</b> refunding costs gold. Right-click the passive on the tree to refund it, then spend the point elsewhere.</li>
+            <li><b>Crafting:</b> cards suggest a simple route when there is one, such as an <i>Essence</i> that guarantees a resistance on a magic item.</li>
+          </ul>
+          <div class="tip"><b>Work in small steps.</b> Fix one or two cards, make a new code, read it again. The list updates and the next best fix moves to the top.</div>
+        </section>
+
+        <section class="card tut-sec" id="t-guide">
+          <h2 class="card-title"><span class="tut-n">7</span>Compare with a guide</h2>
+          <p>Following a build guide? Open the <b>Guide</b> tab.</p>
+          <ol class="steps">
+            <li><b>Best:</b> on the guide page, find its <i>Path of Building</i> button for the stage nearest your level and paste that code. The advisor then compares skills, supports, passives and unique items exactly.</li>
+            <li><b>Also useful:</b> press Ctrl+A then Ctrl+C on the guide page and paste the text. The advisor reads the "last updated" date, the patch, the ascendancy order and the stat priorities.</li>
+            <li>Click <b>Compare</b>.</li>
+          </ol>
+          <p>If the guide was written for an older patch than the current one, a red box warns you. Guides go out of date, so always check the date. "Guide only" items are what the guide uses and you do not; "yours only" are things you use that the guide does not.</p>
+        </section>
+
+        <section class="card tut-sec" id="t-fresh">
+          <h2 class="card-title"><span class="tut-n">8</span>Keep it up to date</h2>
+          <ul class="tut-list">
+            <li><b>Your character changed?</b> Repeat the PoB steps and paste the new code. The page remembers your last code, goals and details.</li>
+            <li><b>The game had a patch?</b> Click <b>Game data</b> at the top right and then <b>Refresh game data</b>. It downloads the latest gem and passive data (about 6.5&nbsp;MB) and keeps it in your browser.</li>
+            <li><b>Guide tab:</b> update the "Current game patch" box when a new patch comes out.</li>
+          </ul>
+        </section>
+
+        <section class="card tut-sec" id="t-words">
+          <h2 class="card-title"><span class="tut-n">9</span>Words you will meet</h2>
+          <dl class="kv tut-words">
+            <dt>Resistance</dt><dd>Cuts damage of one element (fire, cold, lightning, chaos). Capped at 75%. Low resistances are the most common reason new characters die.</dd>
+            <dt>Life / Energy shield</dt><dd>Your health, and a recharging shield on top of it.</dd>
+            <dt>Mana</dt><dd>Pays for skills. If it runs out, you cannot use them.</dd>
+            <dt>Spirit</dt><dd>A budget for skills that stay switched on (buffs, auras, minions). You cannot reserve more than you have.</dd>
+            <dt>Skill gem / support gem</dt><dd>Skill gems give you abilities. Support gems are added to a skill to change it, and usually make it cost more.</dd>
+            <dt>Meta gem</dt><dd>A gem that holds other skills and uses them for you, like "Cast on Critical".</dd>
+            <dt>Passive tree / notable / keystone</dt><dd>The big tree of bonuses you spend points on. Notables are larger named nodes; keystones change the rules.</dd>
+            <dt>Ascendancy</dt><dd>Your specialisation, earned in the Trials. Its points are very strong.</dd>
+            <dt>Mod</dt><dd>One line of stats on an item, like "+30% to Fire Resistance".</dd>
+            <dt>Rare / unique</dt><dd>Rare (yellow) items have random mods. Unique (orange) items have fixed, special mods.</dd>
+            <dt>Exalted / Divine Orb</dt><dd>Common trading currencies. The advisor prices everything in Exalted Orbs.</dd>
+            <dt>Uncut gem</dt><dd>An item that becomes a new gem or levels one up, at the level written on it.</dd>
+            <dt>Essence</dt><dd>Crafting currency that turns a magic item into a rare one with a guaranteed mod.</dd>
+            <dt>League</dt><dd>Standard lasts forever; event leagues start fresh. Trade happens within a league.</dd>
+            <dt>PoB</dt><dd>Path of Building, the free program that copies your character.</dd>
+          </dl>
+        </section>
+
+        <section class="card tut-sec" id="t-faq">
+          <h2 class="card-title"><span class="tut-n">10</span>Questions</h2>
+          <details class="fold"><summary>I don't have a build to load.</summary><p class="small">You don't need one from anyone. Path of Building makes the build from your own character when you import it (section 3). A guide's build is only needed for the optional Guide tab, to compare with yours.</p></details>
+          <details class="fold"><summary>The page says "unknown" a lot.</summary><p class="small">That is on purpose. Damage is unknown until you set a Main Skill in PoB; costs are unknown until you enter prices. The page would rather say unknown than guess.</p></details>
+          <details class="fold"><summary>Spirit says "over budget", but my skills all work in the game.</summary><p class="small">Then Path of Building is missing a Spirit source, often a setting in its Configuration tab. That card is marked "check this" for that reason; you can ignore it.</p></details>
+          <details class="fold"><summary>A card says a passive or mod does nothing, but I think it does.</summary><p class="small">Cards marked "probably" can be wrong when your build converts damage or swaps skills in. Cards without a mark come straight from the game data. If in doubt, check the mod's wording in the game.</p></details>
+          <details class="fold"><summary>A trade link opens an empty search.</summary><p class="small">The text beside each button lists the filters, so you can set them by hand. Make sure your league is right in Your details.</p></details>
+          <details class="fold"><summary>Is my data safe?</summary><p class="small">Nothing leaves your computer except when you click a trade link, refresh game data (downloads from GitHub) or use the account lookup (asks poe.ninja). Everything you type is stored only in this browser.</p></details>
+          <details class="fold"><summary>Can I share the advisor?</summary><p class="small">Yes, for non-commercial personal use: send the file as it is. See <i>About and licence</i> at the bottom of the page.</p></details>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= setup sheet (content inlined from docs/pob-setup.html) ================= -->
+  <section id="setupPage" hidden>
+    <button type="button" class="ghost" id="setupBack">← Back</button>
+    <div class="sheet"><!--SETUP--></div>
+    <div class="actions" style="justify-content:center;margin-top:18px"><button type="button" class="primary" id="setupDone">I have my code: paste it now</button></div>
+  </section>
+
+  <!-- ================= game data page (reachable before a build is loaded) ================= -->
+  <section id="dataPage" hidden>
+    <button type="button" class="ghost" id="dataBack">← Back</button>
+    <div id="dataPageBody" style="margin-top:10px"></div>
+  </section>
+
+  <!-- ================= about and licence ================= -->
+  <section id="aboutPage" hidden>
+    <button type="button" class="ghost" id="aboutBack">← Back</button>
+    <div class="card narrow licence" style="margin-top:10px">
+      <h2 class="card-title">About and licence</h2>
+      <p>Exile Build Advisor reads a Path of Exile 2 character from Path of Building and points out what to improve. It runs entirely in this page.</p>
+      <dl class="kv" style="margin-top:14px">
+        <dt>Author</dt><dd>reytla</dd>
+        <dt>Source code</dt><dd><span class="mono">github.com/reytla/exile-build-adviser</span></dd>
+        <dt>Feedback</dt><dd>Report problems or ideas under <i>Issues</i> on the GitHub page.</dd>
+        <dt>Licence</dt><dd>MIT: free to use, change and share</dd>
+      </dl>
+      <h3>Licence</h3>
+      <div class="legal">
+        <p>MIT License. Copyright © 2026 reytla.</p>
+        <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+        <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+        <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+        <p>Advice the advisor gives is an estimate. Check it in the game before spending currency.</p>
+      </div>
+      <h3>Other people's work used here</h3>
+      <p>Game data (gems, passive tree, item bases) comes from the Path of Building Community project for Path of Exile 2, which is published under the MIT licence. Path of Exile and its game data are © Grinding Gear Games. This advisor is not affiliated with or endorsed by Grinding Gear Games or the Path of Building Community.</p>
+      <p>Fonts: Marcellus SC, Figtree and IBM Plex Mono, under the SIL Open Font License, loaded from Google Fonts.</p>
+    </div>
+  </section>
+
+  <!-- ================= workspace: build loaded ================= -->
+  <section id="workspace" hidden>
+    <div class="banner" id="banner"></div>
+    <nav class="tabs" role="tablist" id="mainTabs" aria-label="Sections">
+      <button type="button" role="tab" data-tab="checkup" aria-selected="true">Check-up</button>
+      <button type="button" role="tab" data-tab="guide" aria-selected="false">Guide</button>
+      <button type="button" role="tab" data-tab="overview" aria-selected="false">Overview</button>
+      <button type="button" role="tab" data-tab="skills" aria-selected="false">Skills</button>
+      <button type="button" role="tab" data-tab="gear" aria-selected="false">Gear</button>
+      <button type="button" role="tab" data-tab="tree" aria-selected="false">Passive tree</button>
+      <button type="button" role="tab" data-tab="details" aria-selected="false">Your details</button>
+      <button type="button" role="tab" data-tab="data" aria-selected="false">Game data</button>
+    </nav>
+    <section class="tab" id="tab-checkup" role="tabpanel"></section>
+    <section class="tab" id="tab-guide" role="tabpanel" hidden></section>
+    <section class="tab" id="tab-overview" role="tabpanel" hidden></section>
+    <section class="tab" id="tab-skills" role="tabpanel" hidden></section>
+    <section class="tab" id="tab-gear" role="tabpanel" hidden></section>
+    <section class="tab" id="tab-tree" role="tabpanel" hidden></section>
+    <section class="tab" id="tab-details" role="tabpanel" hidden>
+      <div class="card narrow">
+        <h2 class="card-title">Your details</h2>
+        <p class="muted">Path of Building does not know these things. Filling them in makes later advice fit your situation. Everything is optional and stays in this browser.</p>
+        <div class="form-grid">
+          <div>
+            <label class="field-label" for="league">League</label>
+            <select id="league"><option value="Standard">Standard</option><option value="event">Current event league</option></select>
+            <p class="help">Prices and trade searches differ per league.</p>
+          </div>
+          <div id="eventLeagueRow" hidden>
+            <label class="field-label" for="eventLeague">Event league name</label>
+            <input type="text" id="eventLeague" placeholder="as shown on the trade site">
+          </div>
+          <div>
+            <label class="field-label" for="levelOv">Character level</label>
+            <input type="number" id="levelOv" min="1" max="100" placeholder="taken from the code">
+            <p class="help">Only if you have levelled since making the code.</p>
+          </div>
+          <div>
+            <label class="field-label" for="budget">Budget for upgrades</label>
+            <div class="inline">
+              <input type="number" id="budget" min="0" step="any" placeholder="amount">
+              <select id="budgetCur" aria-label="Budget currency"><option value="exalted">Exalted Orbs</option><option value="divine">Divine Orbs</option><option value="chaos">Chaos Orbs</option></select>
+            </div>
+          </div>
+        </div>
+        <label class="field-label" for="spare">Spare currency</label>
+        <textarea id="spare" rows="3" placeholder="One per line, for example:&#10;12 exalted&#10;1 divine&#10;30 transmutation"></textarea>
+        <p class="help" id="spareNote" aria-live="polite"></p>
+        <label class="field-label" for="stash">Items in your inventory or stash</label>
+        <textarea id="stash" rows="5" placeholder="In the game, hover over an item and press Ctrl+C, then paste it here. Leave a blank line between items."></textarea>
+        <p class="help" id="stashNote" aria-live="polite"></p>
+        <p class="help" id="savedNote">Saved in this browser only.</p>
+      </div>
+      <div class="card narrow" style="margin-top:18px">
+        <h2 class="card-title">Prices</h2>
+        <p class="muted">Prices change every day, so the page does not guess them. Enter what you see on the trade site, in Exalted Orbs. Blank means unknown, and the check-up then says "price unknown" instead of a number.</p>
+        <div class="prices" id="pricesBody"></div>
+      </div>
+    </section>
+    <section class="tab" id="tab-data" role="tabpanel" hidden></section>
+  </section>
+</div>
+<footer class="site-foot">
+  <div class="in">
+    <span>© 2026 reytla · MIT licence · free to use and share.</span>
+    <span>Not affiliated with Grinding Gear Games.</span>
+    <span class="gap"></span>
+    <button type="button" class="linkish" id="aboutLink">About and licence</button>
+  </div>
+</footer>
+<!--SNAPSHOT-->
+<!--EXAMPLE-->
+<!--INLINE:pobdata.js-->
+<!--INLINE:character.js-->
+<!--INLINE:analysis.js-->
+<!--INLINE:plan.js-->
+<!--INLINE:guide.js-->
+<!--INLINE:lookup.js-->
+<!--INLINE:app.js-->
+</body>
+</html>

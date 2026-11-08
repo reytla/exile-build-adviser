@@ -1,0 +1,13 @@
+Exile Build Advisor: third-party material
+
+The MIT licence in LICENSE covers this project's own code and text. It does not
+cover the following:
+
+- data/snapshot.json is derived from the Path of Building Community project for
+  Path of Exile 2 (https://github.com/PathOfBuildingCommunity/PathOfBuilding-PoE2),
+  MIT licence.
+- Path of Exile and its game data are (c) Grinding Gear Games. This project is
+  not affiliated with or endorsed by Grinding Gear Games, Path of Building
+  Community or poe.ninja.
+- Fonts (Marcellus SC, Figtree, IBM Plex Mono) are loaded from Google Fonts
+  under the SIL Open Font License.
