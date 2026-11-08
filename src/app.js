@@ -849,6 +849,19 @@
       renderData($('#dataPageBody')); show('data');
     };
     $('#dataBack').onclick = () => show(S.char ? 'workspace' : 'welcome');
+    // Reset: two clicks, so nobody erases their data by accident.
+    let resetArmed = null;
+    $('#resetLink').onclick = () => {
+      const b = $('#resetLink');
+      if (!resetArmed) {
+        b.textContent = 'Click again to erase everything saved';
+        resetArmed = setTimeout(() => { resetArmed = null; b.textContent = 'Reset this page'; }, 5000);
+        return;
+      }
+      clearTimeout(resetArmed);
+      for (const k of [STORE, SNAP_STORE, THEME_STORE]) store.del(k);
+      location.reload();
+    };
     $('#aboutLink').onclick = () => {
       S.back = !$('#workspace').hidden ? 'workspace' : !$('#dataPage').hidden ? 'data' : 'welcome';
       show('about');
